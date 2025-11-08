@@ -19,6 +19,9 @@ export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // API URL from environment variable or fallback to localhost
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+
   useEffect(() => {
     // Only run on client side
     setIsMounted(true);
@@ -59,7 +62,7 @@ export default function Home() {
     setIsLoading(true);
 
     try {
-      const response = await axios.post("http://localhost:5000/api/chat", {
+      const response = await axios.post(`${API_URL}/api/chat`, {
         message: currentMessage,
       });
 
@@ -74,7 +77,7 @@ export default function Home() {
     } catch (error) {
       const errorMessage: Message = {
         id: `error-${Date.now()}`,
-        text: "Sorry, I'm having trouble connecting to the server. Please make sure the backend is running on http://localhost:5000",
+        text: `Sorry, I'm having trouble connecting to the server. Please make sure the backend is running on ${API_URL}`,
         sender: "bot",
         timestamp: new Date().toISOString(),
       };
