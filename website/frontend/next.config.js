@@ -2,19 +2,6 @@
 const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
-  // Remove rewrites for production - API calls should go directly to backend URL
-  // async rewrites() {
-  //   return [
-  //     {
-  //       source: "/api/:path*",
-  //       destination: "http://localhost:5000/api/:path*",
-  //     },
-  //   ];
-  // },
-
-  // Optional: Enable static export if needed for certain hosting platforms
-  // trailingSlash: true,
-  // output: 'export',
 
   // Optimize images for better performance
   images: {

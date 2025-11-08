@@ -53,8 +53,8 @@ start "Next.js Frontend" cmd /c "npm run dev"
 echo.
 echo Development servers started successfully!
 echo =========================================
-echo 📡 Backend API: http://localhost:5000
-echo 🌐 Frontend UI: http://localhost:3000
+echo Backend API: http://localhost:5000
+echo Frontend UI: http://localhost:3000
 echo.
 echo Press any key to stop servers and exit...
 pause >nul
