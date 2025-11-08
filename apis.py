@@ -106,3 +106,22 @@ def get_college_team_data(team_id):
         "games": full_schedule
     }
 
+def make_event(title: str, start_datetime: str, end_datetime: str, description: str = "", location: str = "") -> str:
+    try:
+        start_dt = datetime.fromisoformat(start_datetime.replace("Z", ""))
+        end_dt = datetime.fromisoformat(end_datetime.replace("Z", ""))
+        
+        start_formatted = start_dt.strftime("%Y%m%dT%H%M%S")
+        end_formatted = end_dt.strftime("%Y%m%dT%H%M%S")
+        
+        google_calendar_url = (
+            f"https://calendar.google.com/calendar/render?action=TEMPLATE"
+            f"&text={quote_plus(title)}"
+            f"&dates={start_formatted}/{end_formatted}"
+            f"&details={quote_plus(description)}"
+            f"&location={quote_plus(location)}"
+        )
+        
+        return google_calendar_url
+    except Exception as e:
+        return f"Error creating event: {str(e)}"

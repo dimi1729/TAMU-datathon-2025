@@ -9,6 +9,9 @@ load_dotenv()
 
 OPENROUTERKEY = os.environ.get("key")
 
+if not OPENROUTERKEY:
+    raise ValueError("No openrouter key")
+
 TEAM_REFERENCE = """Format: School | Nickname | ESPN_ID | Abbreviation
 Ohio State        | Buckeyes       | 194  | OSU
 Indiana           | Hoosiers       | 84   | IND
@@ -75,7 +78,8 @@ Cincinnati        | Bearcats       | 2132 | CIN"""
 function_map = {
     "get_weather": apis.get_weather,
     "get_deals": apis.get_deals,
-    "get_college_team_data": apis.get_college_team_data
+    "get_college_team_data": apis.get_college_team_data,
+    "make_event": apis.make_event
 }
 
 app = Flask(__name__)
@@ -99,7 +103,13 @@ def index():
               body: JSON.stringify({message: msg})
             });
             const data = await res.json();
-            document.getElementById("output").innerText = data.response;
+            
+            if(data.calendar_url) {
+              document.getElementById("output").innerHTML = data.response + 
+                '<br><br><a href="' + data.calendar_url + '" target="_blank" style="background:#4285f4;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;display:inline-block;margin-top:10px;">Add to Google Calendar</a>';
+            } else {
+              document.getElementById("output").innerText = data.response;
+            }
           } catch(e) {
             document.getElementById("output").innerText = "Error: " + e.message;
           }
@@ -169,13 +179,46 @@ def send():
                         "required": ["team_id"]
                     }
                 }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "make_event",
+                    "description": "Create a calendar event that can be added to Google Calendar. Dates should be in ISO format (YYYY-MM-DDTHH:MM:SS)",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "title": {
+                                "type": "string",
+                                "description": "Event title"
+                            },
+                            "start_datetime": {
+                                "type": "string",
+                                "description": "Start date and time in ISO format (e.g., '2025-11-15T14:00:00')"
+                            },
+                            "end_datetime": {
+                                "type": "string",
+                                "description": "End date and time in ISO format (e.g., '2025-11-15T16:00:00')"
+                            },
+                            "description": {
+                                "type": "string",
+                                "description": "Event description (optional)"
+                            },
+                            "location": {
+                                "type": "string",
+                                "description": "Event location (optional)"
+                            }
+                        },
+                        "required": ["title", "start_datetime", "end_datetime"]
+                    }
+                }
             }
         ]
         
         messages = [
             {
                 "role": "system",
-                "content": f"You are a helpful assistant with access to weather data, deals, and college football information. When users ask about college football teams, use the get_college_team_data function with the ESPN_ID from this reference:\n{TEAM_REFERENCE}"
+                "content": f"You are a helpful assistant with access to weather data, deals, college football information, and calendar event creation. When users ask about college football teams, use the get_college_team_data function with the ESPN_ID from this reference:\n{TEAM_REFERENCE}\n\nWhen creating calendar events, use ISO datetime format (YYYY-MM-DDTHH:MM:SS). Current date is 2025-11-08."
             },
             {
                 "role": "user",
@@ -198,6 +241,7 @@ def send():
         result = response.json()
         
         message = result["choices"][0]["message"]
+        calendar_url = None
         
         if message.get("tool_calls"):
             tool_call = message["tool_calls"][0]
@@ -207,6 +251,10 @@ def send():
             if function_name in function_map:
                 print(f"Calling {function_name} with args: {function_args}")
                 function_response = function_map[function_name](**function_args)
+                
+                if function_name == "make_event" and function_response.startswith("https://"):
+                    calendar_url = function_response
+                    function_response = "Calendar event created successfully!"
                 
                 messages.append(message)
                 messages.append({
@@ -226,6 +274,9 @@ def send():
                 result = response.json()
                 
                 ai_response = result["choices"][0]["message"]["content"]
+                
+                if calendar_url:
+                    return jsonify({"response": ai_response, "calendar_url": calendar_url})
                 return jsonify({"response": ai_response})
         
         ai_response = message.get("content", "No response")
