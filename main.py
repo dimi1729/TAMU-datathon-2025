@@ -77,7 +77,7 @@ def send():
                         "required": ["lat", "lon"]
                     }
                 }
-            }
+            },
         ]
         
         messages = [
