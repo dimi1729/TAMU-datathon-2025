@@ -79,7 +79,8 @@ function_map = {
     "get_weather": apis.get_weather,
     "get_deals": apis.get_deals,
     "get_college_team_data": apis.get_college_team_data,
-    "make_event": apis.make_event
+    "make_event": apis.make_event,
+    "get_rentals": apis.get_rentals
 }
 
 app = Flask(__name__)
@@ -212,13 +213,30 @@ def send():
                         "required": ["title", "start_datetime", "end_datetime"]
                     }
                 }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_rentals",
+                    "description": "Search for rental properties in a specific location using Zillow data",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "location": {
+                                "type": "string",
+                                "description": "Location to search for rentals (e.g., 'college station, tx', 'new york, ny')"
+                            }
+                        },
+                        "required": ["location"]
+                    }
+                }
             }
         ]
         
         messages = [
             {
                 "role": "system",
-                "content": f"You are a helpful assistant with access to weather data, deals, college football information, and calendar event creation. When users ask about college football teams, use the get_college_team_data function with the ESPN_ID from this reference:\n{TEAM_REFERENCE}\n\nWhen creating calendar events, use ISO datetime format (YYYY-MM-DDTHH:MM:SS). Current date is 2025-11-08."
+                "content": f"You are a helpful assistant with access to weather data, deals, college football information, calendar event creation, and rental property search. When users ask about college football teams, use the get_college_team_data function with the ESPN_ID from this reference:\n{TEAM_REFERENCE}\n\nWhen creating calendar events, use ISO datetime format (YYYY-MM-DDTHH:MM:SS). Current date is 2025-11-08."
             },
             {
                 "role": "user",

@@ -7,6 +7,7 @@ from urllib.parse import quote_plus
 load_dotenv()
 
 deals_key = os.environ.get("deals_key")
+rental_key = os.environ.get("rental_key")
 
 def get_weather(location: str) -> str:
     query = quote_plus(location)
@@ -125,3 +126,26 @@ def make_event(title: str, start_datetime: str, end_datetime: str, description: 
         return google_calendar_url
     except Exception as e:
         return f"Error creating event: {str(e)}"
+
+def get_rentals(location: str) -> str:
+    url = "https://zillow56.p.rapidapi.com/search"
+    querystring = {
+        "location": location,
+        "output": "json",
+        "status": "forRent",
+        "sortSelection": "priorityscore",
+        "listing_type": "by_agent",
+        "doz": "any"
+    }
+    
+    headers = {
+        'x-rapidapi-key': rental_key,
+        'x-rapidapi-host': "zillow56.p.rapidapi.com"
+    }
+    
+    response = requests.get(url, headers=headers, params=querystring)
+    
+    if response.status_code != 200:
+        return f"Failed to get rentals: {response.text}"
+    
+    return response.text
