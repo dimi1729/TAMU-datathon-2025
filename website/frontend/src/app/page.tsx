@@ -146,7 +146,7 @@ export default function Home() {
                 <div className="flex items-center space-x-2">
                   <Bot className="w-5 h-5 text-dark-accent" />
                   <Loader2 className="w-4 h-4 animate-spin text-dark-accent" />
-                  <span className="text-sm text-dark-lighter">Typing...</span>
+                  <span className="text-sm text-dark-lighter">Thinking...</span>
                 </div>
               </div>
             </div>
