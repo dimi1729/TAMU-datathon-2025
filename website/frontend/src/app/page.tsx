@@ -20,11 +20,9 @@ export default function Home() {
   const [isMounted, setIsMounted] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // API URL from environment variable or fallback to localhost
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
   useEffect(() => {
-    // Only run on client side
     setIsMounted(true);
     setMessages([
       {
@@ -112,7 +110,7 @@ export default function Home() {
   }
 
   return (
-    <div className="w-full h-full bg-dark-purple rounded-lg shadow-xl overflow-hidden border border-dark-magenta flex flex-col">
+    <div className="w-full h-full bg-dark-purple rounded-lg shadow-xl overflow-hidden border border-dark-magenta flex flex-col relative">
       <div className="bg-dark-base text-white p-4">
         <h2 className="text-xl font-semibold">
           Chat with your College Assistant
@@ -122,7 +120,6 @@ export default function Home() {
         </p>
       </div>
 
-      {/* Chat Messages */}
       <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-dark-purple min-h-0">
         {messages.map((message) => (
           <ChatMessage
@@ -135,13 +132,22 @@ export default function Home() {
           />
         ))}
 
-        {isLoading && (
-          <div className="flex justify-start">
-            <div className="bg-dark-base border border-dark-magenta rounded-lg px-4 py-2 max-w-xs">
-              <div className="flex items-center space-x-2">
-                <Bot className="w-5 h-5 text-dark-accent" />
-                <Loader2 className="w-4 h-4 animate-spin text-dark-accent" />
-                <span className="text-sm text-dark-lighter">Typing...</span>
+      {isLoading && (
+          <div className="flex flex-col space-y-2">
+            <div className="flex justify-start">
+              <img
+                src="/monkey.png"
+                alt="Loading monkey"
+                style={{ height: '150px', width: 'auto', objectFit: 'contain' }}
+              />
+            </div>
+            <div className="flex justify-start">
+              <div className="bg-dark-base border border-dark-magenta rounded-lg px-4 py-2 max-w-xs">
+                <div className="flex items-center space-x-2">
+                  <Bot className="w-5 h-5 text-dark-accent" />
+                  <Loader2 className="w-4 h-4 animate-spin text-dark-accent" />
+                  <span className="text-sm text-dark-lighter">Typing...</span>
+                </div>
               </div>
             </div>
           </div>
@@ -149,7 +155,6 @@ export default function Home() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Chat Input */}
       <form
         onSubmit={sendMessage}
         className="p-6 border-t border-dark-magenta bg-dark-purple flex-shrink-0"
@@ -183,7 +188,6 @@ export default function Home() {
         </div>
       </form>
 
-      {/* Quick Actions */}
       <div className="p-6 bg-dark-base border-t border-dark-magenta flex-shrink-0">
         <p className="text-sm text-dark-accent mb-2">Quick questions:</p>
         <div className="flex flex-wrap gap-2">
