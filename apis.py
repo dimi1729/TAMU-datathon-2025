@@ -8,6 +8,7 @@ load_dotenv()
 
 deals_key = os.environ.get("deals_key")
 rental_key = os.environ.get("rental_key")
+ticketmaster_key = os.environ.get("TICKETMASTER_API_KEY")
 
 def get_weather(location: str) -> str:
     query = quote_plus(location)
@@ -149,3 +150,46 @@ def get_rentals(location: str) -> str:
         return f"Failed to get rentals: {response.text}"
     
     return response.text
+
+def get_events(lat: float, lon: float, radius: int = 10, unit: str = "miles", keyword: str = None, start_date: str = None, end_date: str = None, size: int = 20):
+    if not ticketmaster_key:
+        return "Error: Missing TICKETMASTER_API_KEY"
+    url = "https://app.ticketmaster.com/discovery/v2/events.json"
+    params = {
+        "apikey": ticketmaster_key,
+        "latlong": f"{lat},{lon}",
+        "radius": radius,
+        "unit": unit,
+        "size": size
+    }
+
+    if keyword:
+        params["keyword"] = keyword
+    if start_date and end_date:
+        params["startDateTime"] = start_date
+        params["endDateTime"] = end_date
+
+    response = requests.get(url, params=params)
+
+    if response.status_code != 200:
+        return f"Error: {response.status_code} - {response.text}"
+
+    data = response.json()
+    events = data.get("_embedded", {}).get("events", [])
+    
+    results = []
+    for e in events:
+        event_data = {
+            "name": e.get("name"),
+            "url": e.get("url"),
+            "start_date": e.get("dates", {}).get("start", {}).get("localDate")
+        }
+        
+        if "_embedded" in e and "venues" in e["_embedded"] and len(e["_embedded"]["venues"]) > 0:
+            venue = e["_embedded"]["venues"][0]
+            event_data["venue"] = venue.get("name")
+            event_data["city"] = venue.get("city", {}).get("name")
+        
+        results.append(event_data)
+    
+    return str(results)

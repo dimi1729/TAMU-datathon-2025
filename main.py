@@ -80,7 +80,8 @@ function_map = {
     "get_deals": apis.get_deals,
     "get_college_team_data": apis.get_college_team_data,
     "make_event": apis.make_event,
-    "get_rentals": apis.get_rentals
+    "get_rentals": apis.get_rentals,
+    "get_events": apis.get_events
 }
 
 app = Flask(__name__)
@@ -104,9 +105,9 @@ def index():
               body: JSON.stringify({message: msg})
             });
             const data = await res.json();
-
+            
             if(data.calendar_url) {
-              document.getElementById("output").innerHTML = data.response +
+              document.getElementById("output").innerHTML = data.response + 
                 '<br><br><a href="' + data.calendar_url + '" target="_blank" style="background:#4285f4;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;display:inline-block;margin-top:10px;">Add to Google Calendar</a>';
             } else {
               document.getElementById("output").innerText = data.response;
@@ -123,12 +124,12 @@ def index():
 def send():
     try:
         user_msg = request.json["message"]
-
+        
         headers = {
             "Authorization": f"Bearer {OPENROUTERKEY}",
             "Content-Type": "application/json"
         }
-
+        
         tools = [
             {
                 "type": "function",
@@ -230,26 +231,71 @@ def send():
                         "required": ["location"]
                     }
                 }
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "get_events",
+                    "description": "Get nearby events from Ticketmaster based on latitude and longitude coordinates",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "lat": {
+                                "type": "number",
+                                "description": "Latitude coordinate"
+                            },
+                            "lon": {
+                                "type": "number",
+                                "description": "Longitude coordinate"
+                            },
+                            "radius": {
+                                "type": "integer",
+                                "description": "Search radius (default: 10)"
+                            },
+                            "unit": {
+                                "type": "string",
+                                "description": "Distance unit: 'miles' or 'km' (default: 'miles')"
+                            },
+                            "keyword": {
+                                "type": "string",
+                                "description": "Optional keyword to filter events"
+                            },
+                            "start_date": {
+                                "type": "string",
+                                "description": "Optional start date in ISO format"
+                            },
+                            "end_date": {
+                                "type": "string",
+                                "description": "Optional end date in ISO format"
+                            },
+                            "size": {
+                                "type": "integer",
+                                "description": "Number of results to return (default: 20)"
+                            }
+                        },
+                        "required": ["lat", "lon"]
+                    }
+                }
             }
         ]
-
+        
         messages = [
             {
                 "role": "system",
-                "content": f"You are a helpful assistant with access to weather data, deals, college football information, calendar event creation, and rental property search. When users ask about college football teams, use the get_college_team_data function with the ESPN_ID from this reference:\n{TEAM_REFERENCE}\n\nWhen creating calendar events, use ISO datetime format (YYYY-MM-DDTHH:MM:SS). Current date is 2025-11-08."
+                "content": f"You are a helpful assistant with access to weather data, deals, college football information, calendar event creation, rental property search, and local events via Ticketmaster. When users ask about college football teams, use the get_college_team_data function with the ESPN_ID from this reference:\n{TEAM_REFERENCE}\n\nWhen creating calendar events, use ISO datetime format (YYYY-MM-DDTHH:MM:SS). Current date is 2025-11-08. For event searches, you may need to first get coordinates for a location."
             },
             {
                 "role": "user",
                 "content": user_msg
             }
         ]
-
+        
         payload = {
             "model": "anthropic/claude-3.5-sonnet",
             "messages": messages,
             "tools": tools
         }
-
+        
         response = requests.post(
             "https://openrouter.ai/api/v1/chat/completions",
             headers=headers,
@@ -257,32 +303,32 @@ def send():
         )
         response.raise_for_status()
         result = response.json()
-
+        
         message = result["choices"][0]["message"]
         calendar_url = None
-
+        
         if message.get("tool_calls"):
             tool_call = message["tool_calls"][0]
             function_name = tool_call["function"]["name"]
             function_args = json.loads(tool_call["function"]["arguments"])
-
+            
             if function_name in function_map:
                 print(f"Calling {function_name} with args: {function_args}")
                 function_response = function_map[function_name](**function_args)
-
+                
                 if function_name == "make_event" and function_response.startswith("https://"):
                     calendar_url = function_response
                     function_response = "Calendar event created successfully!"
-
+                
                 messages.append(message)
                 messages.append({
                     "role": "tool",
                     "tool_call_id": tool_call["id"],
                     "content": str(function_response)
                 })
-
+                
                 payload["messages"] = messages
-
+                
                 response = requests.post(
                     "https://openrouter.ai/api/v1/chat/completions",
                     headers=headers,
@@ -290,13 +336,13 @@ def send():
                 )
                 response.raise_for_status()
                 result = response.json()
-
+                
                 ai_response = result["choices"][0]["message"]["content"]
-
+                
                 if calendar_url:
                     return jsonify({"response": ai_response, "calendar_url": calendar_url})
                 return jsonify({"response": ai_response})
-
+        
         ai_response = message.get("content", "No response")
         return jsonify({"response": ai_response})
     except Exception as e:
