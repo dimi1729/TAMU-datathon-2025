@@ -1,0 +1,78 @@
+# Vercel ignore file - exclude files from deployment to speed up builds
+
+# Development files
+.env.local
+.env.development.local
+.env.test.local
+
+# Build artifacts that will be regenerated
+.next/
+out/
+dist/
+build/
+
+# Dependencies (will be installed by Vercel)
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+.nyc_output
+
+# Misc
+.DS_Store
+*.pem
+*.log
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local Vercel CLI
+.vercel
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+
+# Documentation (not needed for build)
+README.md
+CHANGELOG.md
+docs/
+
+# Git files
+.git/
+.gitignore
+
+# Package manager files (only package.json needed)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# TypeScript build info (will be regenerated)
+*.tsbuildinfo
+
+# ESLint cache
+.eslintcache
+
+# Prettier config (not needed for build)
+.prettierrc
+.prettierignore
+
+# Husky (git hooks not needed in Vercel)
+.husky/
+
+# Storybook
+.storybook/
+storybook-static/
