@@ -4,7 +4,7 @@ import os
 import requests
 from dotenv import load_dotenv
 
-load_dotenv()   
+load_dotenv()
 
 def ticketmaster_search_events(
     keyword: str,
@@ -70,18 +70,77 @@ def ticketmaster_search_events(
     response.raise_for_status()
     return response.json()
 
+from pymongo import MongoClient
+from typing import Any, Dict, List, Optional
+import os
+
+# You’d normally load these from environment variables or a config
+MONGODB_URI = os.getenv("MONGODB_URI")
+DB_NAME      = os.getenv("DB_NAME")
+
+client     = MongoClient(MONGODB_URI)
+db         = client[DB_NAME]
+collection = db["DegreePlanners"]
+
+def find_degree_planners(
+    filters: Dict[str, Any],
+    projection: Optional[Dict[str, int]] = None,
+    limit: Optional[int] = None,
+    skip: Optional[int] = None
+) -> List[Dict[str, Any]]:
+    """
+    Fetches documents from the 'DegreePlanners' collection with multiple filter fields.
+
+    :param filters: A dict mapping field names to the values (or sub‑queries) you want to filter on.
+    :param projection: Optional dict specifying which fields to include (1) or exclude (0).
+    :param limit: Optional maximum number of documents to return.
+    :param skip: Optional number of documents to skip (for pagination).
+    :return: A list of matching documents.
+    """
+    # Build the query filter directly from the provided dict
+    query = filters  # e.g., { "status": "active", "year": 3 }
+
+    cursor = collection.find(query, projection) if projection else collection.find(query)
+
+    if skip is not None:
+        cursor = cursor.skip(skip)
+    if limit is not None:
+        cursor = cursor.limit(limit)
+
+    results = list(cursor)
+    return results
+
+# Example usage:
+# if __name__ == "__main__":
+    # try:
+    #     result = ticketmaster_search_events(
+    #         keyword="rock concert",
+    #         countryCode="US",
+    #         city="Los Angeles",
+    #         startDateTime="2025-11-10T00:00:00Z",
+    #         size=10,
+    #         page=0,
+    #         sort="date,asc"
+    #     )
+    #     print(result)
+    # except Exception as e:
+    #     print("Error calling Ticketmaster API:", e)
+
 # Example usage:
 if __name__ == "__main__":
-    try:
-        result = ticketmaster_search_events(
-            keyword="rock concert",
-            countryCode="US",
-            city="Los Angeles",
-            startDateTime="2025-11-10T00:00:00Z",
-            size=10,
-            page=0,
-            sort="date,asc"
-        )
-        print(result)
-    except Exception as e:
-        print("Error calling Ticketmaster API:", e)
+    # Example: find all planners where status="active" and year=3
+    my_filters = {"Year": "First Year", "Semester": "Fall"}
+    # my_projection = {"_id": 0, "name": 1, "year": 1, "status": 1} # include / exclude fields
+    docs = find_degree_planners(my_filters, projection={}, limit=10, skip=0)
+    print(f"Found {len(docs)} documents:")
+    for d in docs:
+        print(d)
+
+"""
+    How to use MongoDB
+    - Query based on paramters e.g. {"Year": "First Year"}
+    - will return the classes or courses needed for those
+
+    Check out TAMU_CS_BS_DEGREEPLAN.csv to see what you can search (your basically searching through that)
+
+"""
