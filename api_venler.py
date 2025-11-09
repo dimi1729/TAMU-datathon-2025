@@ -4,19 +4,21 @@ import os
 import requests
 from dotenv import load_dotenv
 
+from typing import Optional
+
 load_dotenv()
 
 def ticketmaster_search_events(
-    keyword: str,
-    countryCode: str = None,
-    city: str = None,
-    stateCode: str = None,
-    postalCode: str = None,
-    startDateTime: str = None,
-    endDateTime: str = None,
-    size: int = None,
-    page: int = None,
-    sort: str = None
+    keyword: Optional[str],
+    countryCode: Optional[str] = None,
+    city: Optional[str] = None,
+    stateCode: Optional[str] = None,
+    postalCode: Optional[str] = None,
+    startDateTime: Optional[str] = None,
+    endDateTime: Optional[str] = None,
+    size: Optional[int] = None,
+    page: Optional[int] = None,
+    sort: Optional[str] = None
 ) -> dict:
     """
     Search for events via Ticketmaster Discovery API v2.
