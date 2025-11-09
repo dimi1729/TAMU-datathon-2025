@@ -1,0 +1,47 @@
+Year,Semester,Course Code,Course Name,Credit Hours,Notes
+First Year,Fall,CHEM 107,General Chemistry for Engineering Students,3,
+First Year,Fall,CHEM 117,General Chemistry for Engineering Students Laboratory,1,
+First Year,Fall,ENGL 103 or ENGL 104,Introduction to Rhetoric and Composition / Composition and Rhetoric,3,
+First Year,Fall,ENGR 102,Engineering Lab I - Computation,2,
+First Year,Fall,MATH 151,Engineering Mathematics I,4,
+First Year,Fall,,University Core Curriculum,3,
+First Year,Fall,,Total Semester Credit Hours,16,
+First Year,Spring,ENGR 216/PHYS 216,Experimental Physics and Engineering Lab II - Mechanics,2,
+First Year,Spring,MATH 152,Engineering Mathematics II,4,
+First Year,Spring,PHYS 206,Newtonian Mechanics for Engineering and Science,3,
+First Year,Spring,CHEM 120,Fundamentals of Chemistry II,4,
+First Year,Spring,,University Core Curriculum,3,
+First Year,Spring,,Total Semester Credit Hours,16,
+Second Year,Fall,CSCE 181,Introduction to Computing,1,
+Second Year,Fall,CSCE 121,Introduction to Program Design and Concepts,4,
+Second Year,Fall,CSCE 222/CECN 222/ENGR 222,Discrete Structures for Computing,3,
+Second Year,Fall,MATH 304,Linear Algebra,3,
+Second Year,Fall,,General Elective,1,
+Second Year,Fall,,Total Semester Credit Hours,15,
+Second Year,Spring,CSCE 221,Data Structures and Algorithms,4,
+Second Year,Spring,CSCE 312,Computer Organization,4,
+Second Year,Spring,CSCE 314,Programming Languages,3,
+Second Year,Spring,,"Select one of the following: COMM 203, COMM 205, ENGL 210",3,Explanatory Row
+Second Year,Spring,,Emphasis Area Elective,3,Explanatory Row
+Second Year,Spring,,Total Semester Credit Hours,17,
+Third Year,Fall,CSCE 313,Introduction to Computer Systems,4,
+Third Year,Fall,CSCE 331,Foundations of Software Engineering,3,
+Third Year,Fall,STAT 211,Principles of Statistics I,3,
+Third Year,Fall,,University Core Curriculum,3,
+Third Year,Fall,,Emphasis Area Elective,3,Explanatory Row
+Third Year,Fall,,Total Semester Credit Hours,17,
+Third Year,Spring,CSCE 411,Design and Analysis of Algorithms,3,
+Third Year,Spring,CSCE 481,Seminar,1,
+Third Year,Spring,,"Select one of the following: MATH 251, MATH 308, STAT 212",3,Explanatory Row
+Third Year,Spring,,Computer Science Elective,3,Explanatory Row
+Third Year,Spring,CSCE 399,High-Impact Experience,0,Explanatory Row
+Third Year,Spring,,Total Semester Credit Hours,16,
+Fourth Year,Fall,,University Core Curriculum,3,
+Fourth Year,Fall,,Computer Science Elective,3,Explanatory Row
+Fourth Year,Fall,,Emphasis Area Elective,3,Explanatory Row
+Fourth Year,Fall,,Total Semester Credit Hours,15,
+Fourth Year,Spring,CSCE 482,Senior Capstone Design,3,
+Fourth Year,Spring,,University Core Curriculum,3,
+Fourth Year,Spring,,Computer Science Elective,3,Explanatory Row
+Fourth Year,Spring,,Emphasis Area Elective,3,Explanatory Row
+Fourth Year,Spring,,Total Semester Credit Hours,15,

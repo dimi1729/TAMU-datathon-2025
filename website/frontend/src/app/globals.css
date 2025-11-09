@@ -1,0 +1,224 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 26, 26, 29;
+    --background-end-rgb: 59, 28, 50;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --foreground-rgb: 255, 255, 255;
+        --background-start-rgb: 26, 26, 29;
+        --background-end-rgb: 59, 28, 50;
+    }
+}
+
+body {
+    color: rgb(var(--foreground-rgb));
+    background: linear-gradient(
+            to bottom,
+            transparent,
+            rgb(var(--background-end-rgb))
+        )
+        rgb(var(--background-start-rgb));
+}
+
+/* Custom Dark color classes */
+.bg-dark-base {
+    background-color: #1a1a1d;
+}
+.bg-dark-purple {
+    background-color: #3b1c32;
+}
+.bg-dark-magenta {
+    background-color: #6a1e55;
+}
+.bg-dark-pink {
+    background-color: #a64d79;
+}
+.bg-dark-lighter {
+    background-color: #c766a1;
+}
+.bg-dark-accent {
+    background-color: #e887c8;
+}
+
+.text-dark-base {
+    color: #1a1a1d;
+}
+.text-dark-purple {
+    color: #3b1c32;
+}
+.text-dark-magenta {
+    color: #6a1e55;
+}
+.text-dark-pink {
+    color: #a64d79;
+}
+.text-dark-lighter {
+    color: #c766a1;
+}
+.text-dark-accent {
+    color: #e887c8;
+}
+
+.border-dark-base {
+    border-color: #1a1a1d;
+}
+.border-dark-purple {
+    border-color: #3b1c32;
+}
+.border-dark-magenta {
+    border-color: #6a1e55;
+}
+.border-dark-pink {
+    border-color: #a64d79;
+}
+.border-dark-lighter {
+    border-color: #c766a1;
+}
+.border-dark-accent {
+    border-color: #e887c8;
+}
+
+.hover\:bg-dark-base:hover {
+    background-color: #1a1a1d;
+}
+.hover\:bg-dark-purple:hover {
+    background-color: #3b1c32;
+}
+.hover\:bg-dark-magenta:hover {
+    background-color: #6a1e55;
+}
+.hover\:bg-dark-pink:hover {
+    background-color: #a64d79;
+}
+.hover\:bg-dark-lighter:hover {
+    background-color: #c766a1;
+}
+.hover\:bg-dark-accent:hover {
+    background-color: #e887c8;
+}
+
+.hover\:text-dark-base:hover {
+    color: #1a1a1d;
+}
+.hover\:text-dark-purple:hover {
+    color: #3b1c32;
+}
+.hover\:text-dark-magenta:hover {
+    color: #6a1e55;
+}
+.hover\:text-dark-pink:hover {
+    color: #a64d79;
+}
+.hover\:text-dark-lighter:hover {
+    color: #c766a1;
+}
+.hover\:text-dark-accent:hover {
+    color: #e887c8;
+}
+.hover\:text-white:hover {
+    color: #ffffff;
+}
+
+.focus\:ring-dark-base:focus {
+    --tw-ring-opacity: 1;
+    --tw-ring-color: rgb(26 26 29 / var(--tw-ring-opacity));
+}
+.focus\:ring-dark-purple:focus {
+    --tw-ring-opacity: 1;
+    --tw-ring-color: rgb(59 28 50 / var(--tw-ring-opacity));
+}
+.focus\:ring-dark-magenta:focus {
+    --tw-ring-opacity: 1;
+    --tw-ring-color: rgb(106 30 85 / var(--tw-ring-opacity));
+}
+.focus\:ring-dark-pink:focus {
+    --tw-ring-opacity: 1;
+    --tw-ring-color: rgb(166 77 121 / var(--tw-ring-opacity));
+}
+.focus\:ring-dark-lighter:focus {
+    --tw-ring-opacity: 1;
+    --tw-ring-color: rgb(199 102 161 / var(--tw-ring-opacity));
+}
+.focus\:ring-dark-accent:focus {
+    --tw-ring-opacity: 1;
+    --tw-ring-color: rgb(232 135 200 / var(--tw-ring-opacity));
+}
+
+/* Chat scrollbar styling */
+.overflow-y-auto::-webkit-scrollbar {
+    width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+    background: #2d2d30;
+    border-radius: 3px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+    background: #6a1e55;
+    border-radius: 3px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+    background: #a64d79;
+}
+
+/* Animation for typing indicator */
+@keyframes pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Smooth transitions */
+.transition-colors {
+    transition-property: color, background-color, border-color;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+}
+
+/* Input field specific styling for visibility */
+input[type="text"] {
+    color: #1a1a1d !important;
+    background-color: #ffffff !important;
+}
+
+input[type="text"]:focus {
+    color: #1a1a1d !important;
+    background-color: #ffffff !important;
+}
+
+input[type="text"]::placeholder {
+    color: #666666 !important;
+}
+
+/* Dark theme overrides */
+.dark-theme input[type="text"] {
+    color: #ffffff !important;
+    background-color: #2d2d30 !important;
+    border-color: #6a1e55 !important;
+}
+
+.dark-theme input[type="text"]:focus {
+    color: #ffffff !important;
+    background-color: #2d2d30 !important;
+    border-color: #a64d79 !important;
+}
+
+.dark-theme input[type="text"]::placeholder {
+    color: #c766a1 !important;
+}
