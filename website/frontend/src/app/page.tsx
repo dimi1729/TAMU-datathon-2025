@@ -10,6 +10,7 @@ interface Message {
   text: string;
   sender: "user" | "bot";
   timestamp: string;
+  calendarUrl?: string;
 }
 
 export default function Home() {
@@ -71,6 +72,7 @@ export default function Home() {
         text: response.data.response,
         sender: "bot",
         timestamp: response.data.timestamp || new Date().toISOString(),
+        calendarUrl: response.data.calendar_url,
       };
 
       setMessages((prev) => [...prev, botMessage]);
@@ -129,6 +131,7 @@ export default function Home() {
             text={message.text}
             sender={message.sender}
             timestamp={message.timestamp}
+            calendarUrl={message.calendarUrl}
           />
         ))}
 

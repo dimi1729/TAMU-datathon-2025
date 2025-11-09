@@ -8,12 +8,14 @@ interface ChatMessageProps {
   text: string;
   sender: "user" | "bot";
   timestamp: string;
+  calendarUrl?: string;
 }
 
 export default function ChatMessage({
   text,
   sender,
   timestamp,
+  calendarUrl,
 }: ChatMessageProps) {
   const [formattedTime, setFormattedTime] = useState("");
 
@@ -43,6 +45,18 @@ export default function ChatMessage({
           )}
           <div className="flex-1">
             <p className="text-sm whitespace-pre-wrap">{text}</p>
+            {calendarUrl && (
+              <div className="mt-2">
+                <a
+                  href={calendarUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="bg-dark-pink hover:bg-dark-lighter text-white px-4 py-2 rounded-lg transition-colors duration-200 inline-block"
+                >
+                  Add to Calendar
+                </a>
+              </div>
+            )}
             <p
               className={`text-xs mt-1 ${
                 sender === "user"

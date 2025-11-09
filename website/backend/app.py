@@ -1,8 +1,18 @@
 import os
+import sys
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import json
 from datetime import datetime
+
+# Add the parent directory to the path so we can import api_functions
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+# Import the modular API functions
+from api_functions import (
+    get_weather, get_deals, get_college_team_data, make_event,
+    get_rentals, get_events, get_ai_response, get_default_tools, FUNCTION_MAP
+)
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for frontend requests
@@ -31,57 +41,79 @@ COLLEGE_DATA = {
     }
 }
 
-def process_student_query(message):
-    """Simple keyword-based response system for demo"""
+def process_student_query_ai(message):
+    """AI-powered response system using OpenRouter and modular APIs"""
+    try:
+        # Get the default tools and function mapping
+        tools = get_default_tools()
+
+        # Get AI response with access to all API functions
+        result = get_ai_response(
+            user_message=message,
+            tools=tools,
+            function_map=FUNCTION_MAP
+        )
+
+        return result
+
+    except Exception as e:
+        print(f"AI query error: {str(e)}")
+        # Fallback to simple response
+        return {"response": "I'm having trouble processing your request right now. Please try again later."}
+
+def process_student_query_simple(message):
+    """Simple keyword-based response system for fallback"""
     message_lower = message.lower()
 
     # Check for sports keywords
     if any(word in message_lower for word in ["sport", "football", "basketball", "game", "athletics"]):
         if "football" in message_lower:
-            return COLLEGE_DATA["sports"]["football"]
+            return {"response": COLLEGE_DATA["sports"]["football"]}
         elif "basketball" in message_lower:
-            return COLLEGE_DATA["sports"]["basketball"]
+            return {"response": COLLEGE_DATA["sports"]["basketball"]}
         else:
-            return COLLEGE_DATA["sports"]["general"]
+            return {"response": COLLEGE_DATA["sports"]["general"]}
 
     # Check for food keywords
     elif any(word in message_lower for word in ["food", "dining", "eat", "restaurant", "hungry", "meal"]):
         if "dining" in message_lower or "meal" in message_lower:
-            return COLLEGE_DATA["food"]["dining"]
+            return {"response": COLLEGE_DATA["food"]["dining"]}
         else:
-            return COLLEGE_DATA["food"]["restaurants"]
+            return {"response": COLLEGE_DATA["food"]["restaurants"]}
 
     # Check for housing keywords
     elif any(word in message_lower for word in ["apartment", "housing", "dorm", "residence", "live", "room"]):
-        return COLLEGE_DATA["housing"]["on_campus"] + " " + COLLEGE_DATA["housing"]["off_campus"]
+        return {"response": COLLEGE_DATA["housing"]["on_campus"] + " " + COLLEGE_DATA["housing"]["off_campus"]}
 
     # Check for events
     elif any(word in message_lower for word in ["event", "activity", "happening", "club", "organization"]):
-        return COLLEGE_DATA["events"]["upcoming"]
+        return {"response": COLLEGE_DATA["events"]["upcoming"]}
 
     # Check for classes/academic
     elif any(word in message_lower for word in ["class", "course", "professor", "grade", "academic", "study", "tutor"]):
-        return COLLEGE_DATA["academics"]["general"] + " " + COLLEGE_DATA["academics"]["support"]
+        return {"response": COLLEGE_DATA["academics"]["general"] + " " + COLLEGE_DATA["academics"]["support"]}
 
     # Check for calendar/schedule
     elif any(word in message_lower for word in ["calendar", "schedule", "time", "when", "date"]):
-        return "I can help you manage your calendar. You can add events, set reminders, and track important dates."
+        return {"response": "I can help you manage your calendar. You can add events, set reminders, and track important dates."}
 
     # Check for email
     elif any(word in message_lower for word in ["email", "message", "contact", "professor", "send"]):
-        return "I can assist with composing emails to professors, advisors, or student organizations."
+        return {"response": "I can assist with composing emails to professors, advisors, or student organizations."}
 
     # Default response
     else:
-        return ("Hello! I'm your college assistant. I can help you with:\n"
-                "Sports and athletics information\n"
-                "Dining and food options\n"
-                "Housing and residence information\n"
-                "Campus events and activities\n"
-                "Academic resources and support\n"
-                "Calendar management\n"
-                "Email assistance\n"
-                "What would you like to know about?")
+        return {"response": ("Hello! I'm your college assistant. I can help you with:\n"
+                "• Sports and athletics information (including live scores!)\n"
+                "• Weather updates for your area\n"
+                "• Local deals and discounts\n"
+                "• Dining and food options\n"
+                "• Housing and rental property search\n"
+                "• Campus and local events\n"
+                "• Academic resources and support\n"
+                "• Calendar management and event creation\n"
+                "• Email assistance\n"
+                "What would you like to know about?")}
 
 @app.route('/', methods=['GET'])
 def home():
@@ -115,14 +147,36 @@ def chat():
 
         user_message = data['message']
 
-        # Process the message and get response
-        bot_response = process_student_query(user_message)
+        # Try AI-powered response first, fallback to simple if needed
+        try:
+            result = process_student_query_ai(user_message)
 
-        return jsonify({
-            "response": bot_response,
-            "timestamp": datetime.now().isoformat(),
-            "status": "success"
-        })
+            # Check if AI returned an error
+            if "error" in result:
+                print(f"AI error: {result['error']}")
+                result = process_student_query_simple(user_message)
+
+            response_data = {
+                "response": result.get("response", "I couldn't process your request."),
+                "timestamp": datetime.now().isoformat(),
+                "status": "success"
+            }
+
+            # Add calendar URL if present
+            if result.get("calendar_url"):
+                response_data["calendar_url"] = result["calendar_url"]
+
+            return jsonify(response_data)
+
+        except Exception as e:
+            print(f"Chat error: {str(e)}")
+            # Fallback to simple response
+            result = process_student_query_simple(user_message)
+            return jsonify({
+                "response": result.get("response", "I'm having trouble right now. Please try again."),
+                "timestamp": datetime.now().isoformat(),
+                "status": "success"
+            })
 
     except Exception as e:
         return jsonify({
