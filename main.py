@@ -103,9 +103,9 @@ def index():
               body: JSON.stringify({message: msg})
             });
             const data = await res.json();
-            
+
             if(data.calendar_url) {
-              document.getElementById("output").innerHTML = data.response + 
+              document.getElementById("output").innerHTML = data.response +
                 '<br><br><a href="' + data.calendar_url + '" target="_blank" style="background:#4285f4;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;display:inline-block;margin-top:10px;">Add to Google Calendar</a>';
             } else {
               document.getElementById("output").innerText = data.response;
@@ -122,12 +122,12 @@ def index():
 def send():
     try:
         user_msg = request.json["message"]
-        
+
         headers = {
             "Authorization": f"Bearer {OPENROUTERKEY}",
             "Content-Type": "application/json"
         }
-        
+
         tools = [
             {
                 "type": "function",
@@ -214,7 +214,7 @@ def send():
                 }
             },
         ]
-        
+
         messages = [
             {
                 "role": "system",
@@ -225,13 +225,13 @@ def send():
                 "content": user_msg
             }
         ]
-        
+
         payload = {
             "model": "anthropic/claude-3.5-sonnet",
             "messages": messages,
             "tools": tools
         }
-        
+
         response = requests.post(
             "https://openrouter.ai/api/v1/chat/completions",
             headers=headers,
@@ -239,32 +239,32 @@ def send():
         )
         response.raise_for_status()
         result = response.json()
-        
+
         message = result["choices"][0]["message"]
         calendar_url = None
-        
+
         if message.get("tool_calls"):
             tool_call = message["tool_calls"][0]
             function_name = tool_call["function"]["name"]
             function_args = json.loads(tool_call["function"]["arguments"])
-            
+
             if function_name in function_map:
                 print(f"Calling {function_name} with args: {function_args}")
                 function_response = function_map[function_name](**function_args)
-                
+
                 if function_name == "make_event" and function_response.startswith("https://"):
                     calendar_url = function_response
                     function_response = "Calendar event created successfully!"
-                
+
                 messages.append(message)
                 messages.append({
                     "role": "tool",
                     "tool_call_id": tool_call["id"],
                     "content": str(function_response)
                 })
-                
+
                 payload["messages"] = messages
-                
+
                 response = requests.post(
                     "https://openrouter.ai/api/v1/chat/completions",
                     headers=headers,
@@ -272,13 +272,13 @@ def send():
                 )
                 response.raise_for_status()
                 result = response.json()
-                
+
                 ai_response = result["choices"][0]["message"]["content"]
-                
+
                 if calendar_url:
                     return jsonify({"response": ai_response, "calendar_url": calendar_url})
                 return jsonify({"response": ai_response})
-        
+
         ai_response = message.get("content", "No response")
         return jsonify({"response": ai_response})
     except Exception as e:
