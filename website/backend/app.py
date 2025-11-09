@@ -5,9 +5,6 @@ from flask_cors import CORS
 import json
 from datetime import datetime
 
-# Add the parent directory to the path so we can import api_functions
-sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-
 # Import the modular API functions
 from api_functions import (
     get_weather, get_deals, get_college_team_data, make_event,
