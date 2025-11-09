@@ -5,7 +5,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "College Assistant",
+  title: "Campus Compass",
   description: "AI-powered chatbot for college students",
 };
 
@@ -25,7 +25,7 @@ export default function RootLayout({
                   <span className="text-dark-base font-bold text-lg">C</span>
                 </div>
                 <h1 className="text-2xl font-bold text-white">
-                  College Assistant
+                  Campus Compass
                 </h1>
                 <div className="text-sm text-dark-accent ml-auto">
                   Your Campus Helper

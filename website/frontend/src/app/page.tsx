@@ -29,7 +29,7 @@ export default function Home() {
     setMessages([
       {
         id: "welcome",
-        text: "Hello! I'm your college assistant. I can help you with sports, dining, housing, events, academics, and more. What would you like to know?",
+        text: "Hello! I'm Campus Compass. I can help you with sports, dining, housing, events, academics, and more. What would you like to know?",
         sender: "bot",
         timestamp: new Date().toISOString(),
       },
@@ -97,9 +97,7 @@ export default function Home() {
     return (
       <div className="w-full h-full bg-dark-purple rounded-lg shadow-xl overflow-hidden border border-dark-magenta flex flex-col">
         <div className="bg-dark-base text-white p-4">
-          <h2 className="text-xl font-semibold">
-            Chat with your College Assistant
-          </h2>
+          <h2 className="text-xl font-semibold">Chat with Campus Compass</h2>
           <p className="text-dark-accent text-sm">
             Ask about sports, dining, housing, events, and academics
           </p>
@@ -114,9 +112,7 @@ export default function Home() {
   return (
     <div className="w-full h-full bg-dark-purple rounded-lg shadow-xl overflow-hidden border border-dark-magenta flex flex-col">
       <div className="bg-dark-base text-white p-4">
-        <h2 className="text-xl font-semibold">
-          Chat with your College Assistant
-        </h2>
+        <h2 className="text-xl font-semibold">Chat with Campus Compass</h2>
         <p className="text-dark-accent text-sm">
           Ask about sports, dining, housing, events, and academics
         </p>
